@@ -1,9 +1,4 @@
 // -------------------- Interfaces ----------------------
-interface Todo {
-    text: string;
-    completed: boolean;
-}
-
 interface IAuthor {
     name: string;
     avatar: string;
@@ -21,6 +16,17 @@ interface IPost {
     publishDate: Date;
     summary: string;
     title: string;
+}
+
+interface IGetPostsQuery {
+    category?: string,
+    limit?: number,
+    offset?: number
+}
+
+interface IGetPostsResults {
+    count: number
+    results: IPost[]
 }
 
 // -------------------------- Types ---------------------------
