@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { mockServer } from './mock/index';
 import { Container } from "./styles/container";
-import { Content } from "./components/Content";
+import { PostList } from "./components/PostList";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -10,7 +10,7 @@ const App: React.FC = () => {
 
   return (
     <Container>
-      <Content />
+      <PostList />
     </Container>
   );
 };

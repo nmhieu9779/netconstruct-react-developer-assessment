@@ -1,8 +1,10 @@
-import React, { MouseEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createBrowserHistory } from "history";
+import qs from "qs";
+
 import { getPosts } from '../../api';
 import { Dropdown } from '../Dropdown';
 import { Option } from '../Dropdown/Option';
-
 import LoadingIndicator from '../LoadingIndicator';
 import { Post } from '../Post';
 import {
@@ -17,7 +19,7 @@ import {
     StyledPaginationPrevDisabledBtn
 } from './styles';
 
-const  categoryFilter: ICategory[] = [
+const categoryList: ICategory[] = [
     { id: "c63bf3b1-06bd-4499-ab11-93b147ec948d", name: "Data Management" },
     { id: "7b28d5c0-0853-406f-b115-bd14c1ae683f", name: "Digital Marketing" },
     { id: "a1c141f7-0d0e-4521-ba2b-63d1265dcca1", name: "Ecommerce" },
@@ -30,7 +32,7 @@ const  categoryFilter: ICategory[] = [
     { id: "41f72a87-5927-403d-89ce-216d325daa40", name: "Tips and Best Practise" },
 ];
 
-export const Content: React.FC = () => {
+export const PostList: React.FC = () => {
     const PAGE_SIZE = 5;
     
     const [loading, setLoading] = useState(true);
@@ -38,19 +40,34 @@ export const Content: React.FC = () => {
     const [pageCount, setPageCount] = useState(0);
     const [pageList, setPageList] = useState<number[]>([]);
     const [posts, setPosts] = useState<IPost[]>([]);
-    const [selectedFilter, setSelectedFilter] = useState("All");
+    const [categoryFilter, setCategoryFilter] = useState("All");
+    
+    const history = createBrowserHistory();
+
+    useEffect(() => {
+        const urlParams = history.location.search.substr(1);
+        const { page, category } = qs.parse(urlParams);
+        if (page && category) {
+            setCurrentPage(Number(page));
+            setCategoryFilter(String(category));
+        } else if (page) {
+            setCurrentPage(Number(page));
+        } else if (category) {
+            setCategoryFilter(String(category));
+        }
+    }, []);
     
     useEffect(() => {
         fetchPage(currentPage);
-    }, [selectedFilter]);
+    }, [categoryFilter]);
 
     const fetchPage = async (pageNum: number) => {
         // Show loading screen
         setLoading(true);
         let resp;
-        if (selectedFilter !== "All") {
+        if (categoryFilter !== "All") {
             resp = await getPosts({
-                category: selectedFilter,
+                category: categoryFilter,
                 limit: PAGE_SIZE,
                 offset: (pageNum - 1) * PAGE_SIZE
             });
@@ -71,6 +88,8 @@ export const Content: React.FC = () => {
         setPageList(pageArray);
         setCurrentPage(pageNum);
 
+        history.push(`?page=${pageNum}&category=${categoryFilter}`);
+
         // Hide loading screen
         setLoading(false);
     }
@@ -88,13 +107,13 @@ export const Content: React.FC = () => {
                             action="/"
                             onChange={(e) => {
                                 e.preventDefault();
-                                setSelectedFilter(e.target.value)
+                                setCategoryFilter(e.target.value)
                             }}
                         >
                             <Option selected value="All" />
-                            { categoryFilter.map(item => (
+                            { categoryList.map(item => (
                                 <Option 
-                                    selected={selectedFilter === item.name} 
+                                    selected={categoryFilter === item.name} 
                                     value={item.name} key={item.id}
                                 />
                             ))}
