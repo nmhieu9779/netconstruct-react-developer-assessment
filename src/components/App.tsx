@@ -1,10 +1,19 @@
+import { useEffect, useState } from "react";
+import makeServer from '../mock/index';
+import { Container } from "../styles/container";
+import { Content } from "./Content";
+
 const App: React.FC = () => {
+  useEffect(() => {
+    makeServer();
+  }, []);
+
   return (
-    <div>
-      {/* Complete the exercise here. */}
-      Hello World
-    </div>
+    <>
+      <Container>
+        <Content />
+      </Container>
+    </>
   );
 };
-
 export default App;
