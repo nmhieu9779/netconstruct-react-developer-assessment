@@ -1,9 +1,17 @@
 import styled from 'styled-components';
 
+const Wrapper = styled.div `
+    width: 100%;
+    @media only screen and (max-width: 768px) {
+        width: 80vw;
+    }
+`
+
 const StyledPagination = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 15px;
 `;
 
 const StyledPaginationItem = styled.button`
@@ -51,6 +59,7 @@ const StyledPaginationPrevBtn = styled(StyledPaginationNextBtn)``;
 const StyledPaginationPrevDisabledBtn = styled(StyledPaginationNextDisabledBtn)``;
 
 export {
+    Wrapper,
     StyledPagination, 
     StyledPaginationItem, 
     StyledPaginationItemActive, 

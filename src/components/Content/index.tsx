@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { getPosts } from '../../api';
+import { Dropdown } from '../Dropdown';
+import { Option } from '../Dropdown/Option';
+
 import LoadingIndicator from '../LoadingIndicator';
 import { Post } from '../Post';
 import {
+    Wrapper,
     StyledPagination,
     StyledPaginationItem,
     StyledPaginationItemActive,
@@ -13,27 +17,49 @@ import {
     StyledPaginationPrevDisabledBtn
 } from './styles';
 
+const  categoryFilter: ICategory[] = [
+    { id: "c63bf3b1-06bd-4499-ab11-93b147ec948d", name: "Data Management" },
+    { id: "7b28d5c0-0853-406f-b115-bd14c1ae683f", name: "Digital Marketing" },
+    { id: "a1c141f7-0d0e-4521-ba2b-63d1265dcca1", name: "Ecommerce" },
+    { id: "0f91bf2c-aa47-4372-8c22-b403899751b7", name: "Email Marketing" },
+    { id: "fd738de2-aa84-436b-9282-ce5f6944dab7", name: "Landing Pages" },
+    { id: "1ce0ff98-b6c3-4f9a-bc3a-a7dd41e8c471", name: "Marketing Analytics" },
+    { id: "b17d04b7-57d8-4a37-bc76-343699cdb113", name: "Marketing Automation" },
+    { id: "d8521992-c9ff-4e5e-bbb1-7715d8bdf833", name: "Platform News and Updates" },
+    { id: "0e1eeaa5-9600-41b5-ade9-12c01efe0362", name: "Surveys and Forms" },
+    { id: "41f72a87-5927-403d-89ce-216d325daa40", name: "Tips and Best Practise" },
+];
+
 export const Content: React.FC = () => {
     const PAGE_SIZE = 5;
     
     const [loading, setLoading] = useState(true);
-    const [posts, setPosts] = useState<IPost[]>([]);
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [pageCount, setPageCount] = useState(0);
     const [pageList, setPageList] = useState<number[]>([]);
+    const [posts, setPosts] = useState<IPost[]>([]);
+    const [selectedFilter, setSelectedFilter] = useState("All");
     
     useEffect(() => {
-        fetchPage(1);
-    }, [])
+        fetchPage(currentPage);
+    }, [selectedFilter]);
 
     const fetchPage = async (pageNum: number) => {
         // Show loading screen
         setLoading(true);
-
-        const resp = await getPosts({
-            limit: PAGE_SIZE,
-            offset: (pageNum - 1) * PAGE_SIZE
-        });
+        let resp;
+        if (selectedFilter !== "All") {
+            resp = await getPosts({
+                category: selectedFilter,
+                limit: PAGE_SIZE,
+                offset: (pageNum - 1) * PAGE_SIZE
+            });
+        } else {
+            resp = await getPosts({
+                limit: PAGE_SIZE,
+                offset: (pageNum - 1) * PAGE_SIZE
+            });
+        }
 
         // Posts
         setPosts(resp.results);
@@ -56,6 +82,24 @@ export const Content: React.FC = () => {
             ) : (
                 <div>
                     <h1> Post List </h1>
+                    <Wrapper>
+                        <Dropdown
+                            formLabel="Choose a category"
+                            action="/"
+                            onChange={(e) => {
+                                e.preventDefault();
+                                setSelectedFilter(e.target.value)
+                            }}
+                        >
+                            <Option selected value="All" />
+                            { categoryFilter.map(item => (
+                                <Option 
+                                    selected={selectedFilter === item.name} 
+                                    value={item.name} key={item.id}
+                                />
+                            ))}
+                        </Dropdown>
+                    </Wrapper>
                     { posts.map((data) => (
                         <Post post={data} key={data.id} />
                     ))}

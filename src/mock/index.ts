@@ -1,10 +1,13 @@
 import { createServer } from 'miragejs';
 import data from './data.json';
 
+
+
 export function mockServer():void {
   createServer({
     routes() {
       this.namespace = 'api';
+
       this.get('/posts', (schema, request) => {
         const { category, limit, offset } = request.queryParams;
 
@@ -32,6 +35,18 @@ export function mockServer():void {
           "results": pagniated
         }
       });
+
+      this.get('/categories', () => {
+        const results = new Set();
+
+        data.posts.forEach(post => {
+          post.categories.forEach(cat => {
+            results.add(cat.name);
+          })
+        });
+
+        return results;
+      })
     },
   });
 }
