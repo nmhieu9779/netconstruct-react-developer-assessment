@@ -11,3 +11,12 @@ export const getPosts = async (query: IGetPostsQuery)
         throw new Error(e);
     }
 }
+
+export const getCategories = async (): Promise<ICategory[]> => {
+    try {
+        const resp:AxiosResponse = await axios.get('/api/categories');
+        return resp.data;
+    } catch (e) {
+        throw new Error(e);
+    }
+}

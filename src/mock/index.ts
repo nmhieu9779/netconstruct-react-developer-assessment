@@ -1,8 +1,6 @@
 import { createServer } from 'miragejs';
 import data from './data.json';
 
-
-
 export function mockServer():void {
   createServer({
     routes() {
@@ -36,16 +34,24 @@ export function mockServer():void {
         }
       });
 
-      this.get('/categories', () => {
-        const results = new Set();
+      this.get('/categories', (schema, request) => {
+        const categories = new Set<string>();
 
         data.posts.forEach(post => {
-          post.categories.forEach(cat => {
-            results.add(cat.name);
+          post.categories.forEach(e => {
+            categories.add(e.name);
           })
         });
 
-        return results;
+        const ret:ICategory[] = [];
+        Array.from(categories).forEach((category, index) => {
+          ret.push({
+            id: String(index),
+            name: category
+          })
+        });
+
+        return ret;
       })
     },
   });

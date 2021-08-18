@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createBrowserHistory } from "history";
 import qs from "qs";
 
-import { getPosts } from '../../api';
+import { getPosts, getCategories } from '../../api';
 import { Dropdown } from '../Dropdown';
 import { Option } from '../Dropdown/Option';
 import LoadingIndicator from '../LoadingIndicator';
@@ -41,10 +41,23 @@ export const PostList: React.FC = () => {
     const [pageList, setPageList] = useState<number[]>([]);
     const [posts, setPosts] = useState<IPost[]>([]);
     const [categoryFilter, setCategoryFilter] = useState("All");
+    const [categoryList, setCategoryList] = useState<ICategory[]>([]);
     
     const history = createBrowserHistory();
 
     useEffect(() => {
+        fetchCategories()
+    }, []);
+
+    const fetchCategories = async () => {
+        // Fetch CategoryList
+        const categories = await getCategories();
+        console.log(categories);
+        setCategoryList(categories);        
+    }
+
+    useEffect(() => {
+        // URLs Params 
         const urlParams = history.location.search.substr(1);
         const { page, category } = qs.parse(urlParams);
         if (page && category) {
@@ -56,7 +69,7 @@ export const PostList: React.FC = () => {
             setCategoryFilter(String(category));
         }
     }, []);
-    
+
     useEffect(() => {
         fetchPage(currentPage);
     }, [categoryFilter]);
@@ -77,6 +90,8 @@ export const PostList: React.FC = () => {
                 offset: (pageNum - 1) * PAGE_SIZE
             });
         }
+
+        console.log(resp);
 
         // Posts
         setPosts(resp.results);
