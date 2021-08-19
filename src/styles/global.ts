@@ -30,23 +30,20 @@ const GlobalStyle = createGlobalStyle`
       transform: rotate(360deg);
     }
   }
-  
-  .prev,
-  .next {
-    background: #fff;
-    border: none;
-    padding: 10px;
-    color: blue;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
-    margin: 0 10px;
-    cursor: pointer;
+
+  @keyframes lds-hourglass {
+    0% {
+      transform: rotate(0);
+      animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+    50% {
+      transform: rotate(900deg);
+      animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    100% {
+      transform: rotate(1800deg);
+    }
   }
   
-  .prev.disabled,
-  .next.disabled {
-    pointer-events: none;
-    box-shadow: none;
-    color: #999;
-  }
 `;
 export default GlobalStyle;
