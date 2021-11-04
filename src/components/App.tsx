@@ -1,10 +1,7 @@
+import Home from './Home';
+
 const App: React.FC = () => {
-  return (
-    <div>
-      {/* Complete the exercise here. */}
-      Hello World
-    </div>
-  );
+  return <Home />;
 };
 
 export default App;
